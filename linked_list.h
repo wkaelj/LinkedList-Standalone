@@ -8,7 +8,7 @@
 // I wanted to experiment with making C feel a little more object
 // oriented without giving up any speed (or using C++).
 //
-// CURRENTLY USING TYPEOF(), SO ARRAYS MUST BE HANDLED BY USER
+// CURRENTLY USING TYPEOF(), SO ARRAYS MUST BE HANDLED BY USER (can be overloaded using size parameter)
 //
 // Kael Johnston, Feb 18th 2022
 
@@ -19,26 +19,21 @@ typedef struct t_ListNode ListNode;
 typedef struct t_LinkedList LinkedList;
 
 // define list returns
-typedef enum e_ListReturns ListReturns;
-
-// define function types
-typedef void* (*t_get)(LinkedList *pList, size_t index, ListReturns *pState); // return index from list
-typedef size_t (*t_find)(LinkedList *pList, void *pValue, ListReturns *pState); // Find value in linkedlist. Return NULL on failure. WARNING: Value gets dereferenced
-typedef ListReturns (*t_append)(LinkedList *pList, void *pValue); // push value to end of list
-typedef ListReturns (*t_prepend)(LinkedList *pList, void *pValue); // push value to front of list
-typedef ListReturns (*t_push)(LinkedList *pList, size_t index, void *pValue); // push value to index of list
-typedef ListReturns (*t_pop)(LinkedList *pList, size_t index); // pop index out of list
-
-
-// possible list return info
-enum e_ListReturns
-{
+typedef enum e_ListReturns {
 
     LIST_FAILURE = -1,
     LIST_SUCCESS = 0,
     LIST_INDEX_OVERFLOW = 2,
     LIST_INDEX_NULL = 3
-};
+} ListReturns;
+
+// define function types
+typedef void* (*t_get)(LinkedList *pList, size_t index, ListReturns *pState); // return index from list
+typedef size_t (*t_find)(LinkedList *pList, void *pValue, ListReturns *pState); // Find value in linkedlist. Return NULL on failure. WARNING: Value gets dereferenced
+typedef ListReturns (*t_append)(LinkedList *pList, void *pValue, size_t size); // push value to end of list
+typedef ListReturns (*t_prepend)(LinkedList *pList, void *pValue); // push value to front of list
+typedef ListReturns (*t_push)(LinkedList *pList, size_t index, void *pValue); // push value to index of list
+typedef ListReturns (*t_pop)(LinkedList *pList, size_t index); // pop index out of list
 
 struct t_LinkedList
 {
@@ -66,8 +61,8 @@ static void *list_get (LinkedList *list, size_t index, ListReturns *state);
 // check if list containes value, and return the index of that value (first occurance only) WARNING: Value gets dereferenced returns NULL on failure
 static size_t list_find (LinkedList *list, void *value, ListReturns *state); 
 
-// append a value to the end of list
-static ListReturns list_append (LinkedList *list, void *value);
+// append a value to the end of list. if size is 0, will attempt to infer size using typeof
+static ListReturns list_append (LinkedList *list, void *value, size_t size);
 
 // push value to the beggining of list
 static ListReturns list_prepend (LinkedList *list, void *value);

@@ -73,14 +73,15 @@ static size_t list_find (LinkedList *list, void *value, ListReturns *state)
 }
 
 // append implementation
-static ListReturns list_append (LinkedList *list, void *value)
+static ListReturns list_append (LinkedList *list, void *value, size_t size)
 {
     
     // create the new node
     ListNode *node = newNode (); 
 
     node->value = value;
-    node->size = sizeof (typeof (*value)); // experiment
+    node->size = size;
+    if (size == 0) node->size = sizeof (typeof (*value)); // experiment
 
     list->length++; // make list longer
 
